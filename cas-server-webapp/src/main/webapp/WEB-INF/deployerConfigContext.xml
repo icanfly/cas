@@ -61,7 +61,7 @@
                    | set its name to something other than its default name (typically the simple class name).
                    -->
                 <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
-                <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
+                <entry key-ref="dbAuthHandler" value-ref="primaryPrincipalResolver" />
             </map>
         </constructor-arg>
 
@@ -84,6 +84,17 @@
             <bean class="org.jasig.cas.authentication.AnyAuthenticationPolicy" />
         </property>
     </bean>
+
+    <bean id="dbAuthHandler"
+          class="org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler"
+          p:dataSource-ref="dataSource"
+          p:sql="select passwd from user where login_name =? "
+          p:passwordEncoder-ref="passwordEncoder" />
+
+    <bean id="passwordEncoder"
+          class="org.jasig.cas.authentication.handler.DefaultPasswordEncoder"
+          c:encodingAlgorithm="MD5"
+          p:characterEncoding="UTF-8" />
 
     <!-- Required for proxy ticket mechanism. -->
     <bean id="proxyAuthenticationHandler"

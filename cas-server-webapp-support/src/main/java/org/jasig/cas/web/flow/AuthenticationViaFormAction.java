@@ -36,12 +36,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.binding.message.MessageResolver;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
@@ -70,6 +72,9 @@ public class AuthenticationViaFormAction {
     /** Error result. */
     public static final String ERROR = "error";
 
+    /** Captcha error result. **/
+    public static final String CAPTCHA_ERROR = "captchaError";
+
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -91,6 +96,12 @@ public class AuthenticationViaFormAction {
      */
     public final Event submit(final RequestContext context, final Credential credential,
                               final MessageContext messageContext)  {
+        //check captcha
+        if(!validateCaptcha(context)){
+            messageContext.addMessage(buildErrorMessage("error.invalid.captcha"));
+            return newEvent(CAPTCHA_ERROR);
+        }
+
         if (!checkLoginTicketIfExists(context)) {
             return returnInvalidLoginTicketEvent(context, messageContext);
         }
@@ -100,6 +111,32 @@ public class AuthenticationViaFormAction {
         }
 
         return createTicketGrantingTicket(context, credential, messageContext);
+    }
+
+    /**
+     * build error message for message context
+     * @param code
+     * @return
+     */
+    private MessageResolver buildErrorMessage(String code) {
+        return new MessageBuilder().code(code).error().build();
+    }
+
+    /**
+     * validate captcha
+     * @param context
+     * @return true if captcha valid
+     */
+    private boolean validateCaptcha(RequestContext context) {
+        HttpSession session = WebUtils.getHttpServletRequest(context).getSession();
+        String sessionCaptcha = (String)session.getAttribute(com.google.code.kaptcha.Constants.KAPTCHA_SESSION_KEY);
+        String requestCaptcha = getRequestCaptcha(context);
+
+        return !org.springframework.util.StringUtils.isEmpty(requestCaptcha) && org.springframework.util.StringUtils.endsWithIgnoreCase(sessionCaptcha, requestCaptcha);
+    }
+
+    private String getRequestCaptcha(RequestContext context) {
+        return (String)context.getRequestParameters().get("captcha");
     }
 
     /**
@@ -131,7 +168,7 @@ public class AuthenticationViaFormAction {
     protected Event returnInvalidLoginTicketEvent(final RequestContext context, final MessageContext messageContext) {
         final String loginTicketFromRequest = WebUtils.getLoginTicketFromRequest(context);
         logger.warn("Invalid login ticket [{}]", loginTicketFromRequest);
-        messageContext.addMessage(new MessageBuilder().code("error.invalid.loginticket").build());
+        messageContext.addMessage(buildErrorMessage("error.invalid.loginticket"));
         return newEvent(ERROR);
     }
 

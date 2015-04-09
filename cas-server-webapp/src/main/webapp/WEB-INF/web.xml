@@ -149,6 +149,60 @@
         <servlet-class>com.codahale.metrics.servlets.ThreadDumpServlet</servlet-class>
     </servlet>
 
+    <servlet>
+      <servlet-name>captcha</servlet-name>
+      <servlet-class>com.google.code.kaptcha.servlet.KaptchaServlet</servlet-class>
+      <init-param>
+        <param-name>kaptcha.border</param-name>
+        <param-value>yes</param-value>
+      </init-param>
+      <init-param>
+        <param-name>kaptcha.border.color</param-name>
+        <param-value>105,179,90</param-value>
+      </init-param>
+      <init-param>
+        <param-name>kaptcha.textproducer.font.color</param-name>
+        <param-value>blue</param-value>
+      </init-param>
+      <init-param>
+        <param-name>kaptcha.image.width</param-name>
+        <param-value>100</param-value>
+      </init-param>
+      <init-param>
+        <param-name>kaptcha.image.height</param-name>
+        <param-value>30</param-value>
+      </init-param>
+      <init-param>
+        <param-name>kaptcha.textproducer.font.size</param-name>
+        <param-value>20</param-value>
+      </init-param>
+      <init-param>
+        <param-name>kaptcha.textproducer.char.length</param-name>
+        <param-value>4</param-value>
+      </init-param>
+      <init-param>
+        <param-name>kaptcha.textproducer.char.string</param-name>
+        <param-value>0123456789</param-value>
+      </init-param>
+      <init-param>
+        <param-name>kaptcha.obscurificator.impl</param-name>
+        <param-value>com.google.code.kaptcha.impl.ShadowGimpy</param-value>
+      </init-param>
+      <init-param>
+        <param-name>kaptcha.background.clear.to</param-name>
+        <param-value>white</param-value>
+      </init-param>
+      <init-param>
+        <param-name>kaptcha.noise.color</param-name>
+        <param-value>black</param-value>
+      </init-param>
+    </servlet>
+
+    <servlet-mapping>
+      <servlet-name>captcha</servlet-name>
+      <url-pattern>/captcha.jpg</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
         <url-pattern>/login</url-pattern>

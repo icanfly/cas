@@ -81,6 +81,15 @@
             <span id="capslock-on" style="display:none;"><p><img src="images/warning.png" valign="top"> <spring:message code="screen.capslock.on" /></p></span>
         </section>
 
+        <section class="row">
+            <label for="captcha"><spring:message code="screen.welcome.label.captcha"/></label>
+            <spring:message code="screen.welcome.label.captcha.accesskey" var="captchaAccessKey"/>
+            <form:input cssClass="required" cssErrorClass="error" id="captcha" size="10" tabindex="2" path="captcha"
+                        accesskey="${captchaAccessKey}" htmlEscape="true" autocomplete="off"/>
+            <img src="${request.contextPath}/captcha.jpg" style="vertical-align:middle;"
+                 onclick="this.src='${request.contextPath}/captcha.jpg?rnd=' + Math.random();"/>
+        </section>
+
         <section class="row check">
             <input id="warn" name="warn" value="true" tabindex="3" accesskey="<spring:message code="screen.welcome.label.warn.accesskey" />" type="checkbox" />
             <label for="warn"><spring:message code="screen.welcome.label.warn" /></label>

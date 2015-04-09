@@ -64,7 +64,9 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
         
         if (!locale.equals(Locale.ENGLISH)) {
           for (int i = 0; !foundCode && i < this.basenames.length; i++) {
-              final String filename = this.basenames[i] + "_" + locale.getLanguage();
+              //@date 2015-04-09
+              //modify by Luo Peng. fix the bug locale for zh_CN
+              final String filename = this.basenames[i] + "_" + locale.toString();
               
               logger.debug("Examining language bundle [{}] for the code [{}]", filename, code);
               final PropertiesHolder holder = this.getProperties(filename);

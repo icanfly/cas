@@ -52,6 +52,11 @@ public class UsernamePasswordCredential implements Credential, Serializable {
     @Size(min=1, message = "required.password")
     private String password;
 
+    /** The captcha */
+    @NotNull
+    @Size(min=1, message = "required.captcha")
+    private String captcha;
+
     /** Default constructor. */
     public UsernamePasswordCredential() {}
 
@@ -64,6 +69,14 @@ public class UsernamePasswordCredential implements Credential, Serializable {
     public UsernamePasswordCredential(final String userName, final String password) {
         this.username = userName;
         this.password = password;
+    }
+
+    public String getCaptcha() {
+        return captcha;
+    }
+
+    public void setCaptcha(String captcha) {
+        this.captcha = captcha;
     }
 
     /**
