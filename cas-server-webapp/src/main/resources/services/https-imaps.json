@@ -1,9 +1,9 @@
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "id" : 10000001,
-  "description" : "This service definition authorized all application urls that support HTTPS and IMAPS protocols.",
+  "description" : "This service definition authorized all application urls that support HTTP(S) and IMAP(S) protocols.",
   "serviceId" : "^(https?|imaps?)://.*",
-  "name": "HTTPS and IMAPS",
+  "name": "HTTP(S) and IMAP(S)",
   "evaluationOrder" : 10000001,
   "logo" : null,
   "logoutType" : "BACK_CHANNEL",

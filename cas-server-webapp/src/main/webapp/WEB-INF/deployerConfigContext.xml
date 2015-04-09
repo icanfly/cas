@@ -88,7 +88,7 @@
     <bean id="dbAuthHandler"
           class="org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler"
           p:dataSource-ref="dataSource"
-          p:sql="select passwd from user where login_name =? "
+          p:sql="select PASSWORD from PLM_BOSS_USER where USERNAME =? "
           p:passwordEncoder-ref="passwordEncoder" />
 
     <bean id="passwordEncoder"
