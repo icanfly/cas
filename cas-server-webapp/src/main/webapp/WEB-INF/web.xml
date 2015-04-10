@@ -252,7 +252,7 @@
         <servlet-name>cas</servlet-name>
         <url-pattern>/status</url-pattern>
     </servlet-mapping>
-
+    
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
         <url-pattern>/statistics</url-pattern>
@@ -291,6 +291,11 @@
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
         <url-pattern>/v1/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/user/*</url-pattern>
     </servlet-mapping>
 
     <session-config>
