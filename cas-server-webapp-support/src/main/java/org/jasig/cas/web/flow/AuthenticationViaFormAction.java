@@ -119,7 +119,7 @@ public class AuthenticationViaFormAction {
      * @return
      */
     private MessageResolver buildErrorMessage(String code) {
-        return new MessageBuilder().code(code).error().build();
+        return new MessageBuilder().error().code(code).build();
     }
 
     /**
@@ -168,7 +168,7 @@ public class AuthenticationViaFormAction {
     protected Event returnInvalidLoginTicketEvent(final RequestContext context, final MessageContext messageContext) {
         final String loginTicketFromRequest = WebUtils.getLoginTicketFromRequest(context);
         logger.warn("Invalid login ticket [{}]", loginTicketFromRequest);
-        messageContext.addMessage(buildErrorMessage("error.invalid.loginticket"));
+        messageContext.addMessage(new MessageBuilder().error().code("error.invalid.loginticket").build());
         return newEvent(ERROR);
     }
 
