@@ -40,6 +40,10 @@
             classpath*:/META-INF/spring/*.xml
         </param-value>
     </context-param>
+    <context-param>
+        <param-name>spring.profiles.default</param-name>
+        <param-value>dev</param-value>
+    </context-param>
 
     <filter>
         <filter-name>CAS Client Info Logging Filter</filter-name>
@@ -91,6 +95,15 @@
     <filter-mapping>
         <filter-name>characterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>authFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>authFilter</filter-name>
+        <url-pattern>/mgt/*</url-pattern>
     </filter-mapping>
 
     <!--

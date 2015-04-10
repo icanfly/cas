@@ -26,4 +26,7 @@
     <bean id="characterEncodingFilter" class="org.springframework.web.filter.CharacterEncodingFilter"
             p:encoding="UTF-8"
             p:forceEncoding="true" />
+
+    <bean id="authFilter" class="org.jasig.cas.web.filter.AuthFilter"
+            p:userUtils-ref="userUtils"/>
 </beans>

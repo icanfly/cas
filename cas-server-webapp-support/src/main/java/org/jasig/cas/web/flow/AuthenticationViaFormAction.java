@@ -132,6 +132,9 @@ public class AuthenticationViaFormAction {
         String sessionCaptcha = (String)session.getAttribute(com.google.code.kaptcha.Constants.KAPTCHA_SESSION_KEY);
         String requestCaptcha = getRequestCaptcha(context);
 
+        //remove
+        session.removeAttribute(com.google.code.kaptcha.Constants.KAPTCHA_SESSION_KEY);
+
         return !org.springframework.util.StringUtils.isEmpty(requestCaptcha) && org.springframework.util.StringUtils.endsWithIgnoreCase(sessionCaptcha, requestCaptcha);
     }
 

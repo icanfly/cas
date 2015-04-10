@@ -88,13 +88,18 @@
     <bean id="dbAuthHandler"
           class="org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler"
           p:dataSource-ref="dataSource"
-          p:sql="select PASSWORD from PLM_BOSS_USER where USERNAME =? "
+          p:sql="SELECT PASSWORD FROM PLM_BOSS_USER WHERE USERNAME = ? "
           p:passwordEncoder-ref="passwordEncoder" />
 
     <bean id="passwordEncoder"
           class="org.jasig.cas.authentication.handler.DefaultPasswordEncoder"
           c:encodingAlgorithm="MD5"
           p:characterEncoding="UTF-8" />
+
+    <bean id="userDao" class="org.jasig.cas.user.UserDaoImpl"
+          p:dataSource-ref="dataSource"
+          p:sql="UPDATE PLM_BOSS_USER SET PASSWORD = ? WHERE USERNAME = ? AND PASSWORD = ?"
+          p:passwordEncoder-ref="passwordEncoder"/>
 
     <!-- Required for proxy ticket mechanism. -->
     <bean id="proxyAuthenticationHandler"
@@ -177,4 +182,8 @@
               p:serviceTicketCountWarnThreshold="5000"
               p:sessionCountWarnThreshold="100000" />
     </util:list>
+
+    <bean id="userUtils" class="org.jasig.cas.util.UserUtils"
+          p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
+          p:centralAuthenticationService-ref="centralAuthenticationService"/>
 </beans>

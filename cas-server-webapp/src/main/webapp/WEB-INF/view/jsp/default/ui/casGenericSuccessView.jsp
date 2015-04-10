@@ -1,3 +1,5 @@
+<%@ page pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%--
 
     Licensed to Apereo under one or more contributor license
@@ -23,6 +25,9 @@
     <h2><spring:message code="screen.success.header" /></h2>
     <p><spring:message code="screen.success.success" arguments="${principal.id}"/></p>
     <p><spring:message code="screen.success.security" /></p>
+  </div>
+  <div>
+      <a href="${request.contextPath}/mgt/user/update_passwd" style="text-decoration:none;"><h2>转至 修改密码</h2></a>
   </div>
 <jsp:directive.include file="includes/bottom.jsp" />
 

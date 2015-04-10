@@ -1,3 +1,5 @@
+<%@ page pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%--
 
     Licensed to Apereo under one or more contributor license
@@ -23,5 +25,8 @@
     <h2><spring:message code="screen.logout.header" /></h2>
     <p><spring:message code="screen.logout.success" /></p>
     <p><spring:message code="screen.logout.security" /></p>
+  </div>
+  <div>
+    <a href="${request.contextPath}/login" style="text-decoration:none;"><h2>转至 登录页</h2></a>
   </div>
 <jsp:directive.include file="includes/bottom.jsp" />

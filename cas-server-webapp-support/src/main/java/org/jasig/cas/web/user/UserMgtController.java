@@ -1,17 +1,17 @@
 package org.jasig.cas.web.user;
 
-import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.Authentication;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.InvalidTicketException;
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
-import org.jasig.cas.web.support.WebUtils;
+import org.jasig.cas.user.UserDao;
+import org.jasig.cas.util.UserUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * @author luopeng
@@ -21,31 +21,62 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/user")
 public class UserMgtController {
 
-    @Resource(name = "ticketGrantingTicketCookieGenerator")
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    @Resource
+    private UserDao userDao;
 
     @Resource
-    private CentralAuthenticationService centralAuthenticationService;
+    private UserUtils userUtils;
 
-    @RequestMapping("/modify_password")
-    public String test(HttpServletRequest request) throws InvalidTicketException {
+    private String updatePasswdUrl = "/mgt/user/update_passwd";
 
-        String tgt = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+    @RequestMapping(value = "/update_passwd", method = RequestMethod.GET)
+    public String updatePass(HttpServletRequest request, String code) {
+        request.setAttribute("code", code);
+        return "/default/ui/user/updatePasswd";
+    }
 
-        System.out.println("tgt:"+tgt);
+    @RequestMapping(value = "/update_passwd", method = RequestMethod.POST)
+    public String postUpdatePasswd(HttpServletRequest request, HttpServletResponse response, String oldPasswd, String newPasswd,
+                                   String confirmNewPasswd,String captcha) throws InvalidTicketException {
 
-        TicketGrantingTicket ticket = centralAuthenticationService.getTicket(tgt,TicketGrantingTicket.class);
-
-        System.out.println("ticket:" + ticket);
-
-        if(ticket != null && !ticket.isExpired()){
-            Authentication auth = ticket.getAuthentication();
-            System.out.println("auth:" + auth);
-
-            System.out.println("principal:" + auth.getPrincipal());
+        if(!validateCaptcha(request,captcha)){
+            return sendRedirectToUpdatePasswd(request,"captcha_error");
         }
 
-        return "/default/ui/user/user_test";
+        if (StringUtils.isBlank(oldPasswd)){
+            return sendRedirectToUpdatePasswd(request, "passwd_miss");
+        }
+
+        if (StringUtils.isBlank(newPasswd) || !StringUtils.equals(newPasswd, confirmNewPasswd)) {
+            return sendRedirectToUpdatePasswd(request, "confirm_passwd_mismatch");
+        }
+
+        String loginName = userUtils.getLoginPrincipal(request);
+
+        if (!userDao.updatePasswd(newPasswd,loginName, oldPasswd)) {
+            return sendRedirectToUpdatePasswd(request, "failure");
+        }
+
+        return sendRedirectToUpdatePasswd(request, "ok");
+    }
+
+    private String sendRedirectToUpdatePasswd(HttpServletRequest request, String code) {
+        return "redirect:" + request.getContextPath() + updatePasswdUrl + "/?code=" + code;
+    }
+
+    /**
+     * validate captcha
+     * @param request
+     * @return true if captcha valid
+     */
+    private boolean validateCaptcha(HttpServletRequest request,String captcha) {
+        HttpSession session = request.getSession();
+        String sessionCaptcha = (String)session.getAttribute(com.google.code.kaptcha.Constants.KAPTCHA_SESSION_KEY);
+
+        //remove
+        session.removeAttribute(com.google.code.kaptcha.Constants.KAPTCHA_SESSION_KEY);
+
+        return !org.springframework.util.StringUtils.isEmpty(captcha) && org.springframework.util.StringUtils.endsWithIgnoreCase(sessionCaptcha, captcha);
     }
 
 }
