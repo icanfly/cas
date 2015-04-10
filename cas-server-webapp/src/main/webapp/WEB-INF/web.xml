@@ -295,7 +295,7 @@
 
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
-        <url-pattern>/user/*</url-pattern>
+        <url-pattern>/mgt/*</url-pattern>
     </servlet-mapping>
 
     <session-config>
