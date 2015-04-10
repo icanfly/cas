@@ -70,7 +70,7 @@
             <property name="locations">
                 <list>
                     <value>${cas.properties.filepath:/WEB-INF/cas.properties}</value>
-                    <value>classpath:/profiles/dev.properties</value>
+                    <value>classpath:/profiles/production.properties</value>
                     <value>file:#{systemProperties['user.home']}/.cas/cas.properties</value>
                 </list>
             </property>
