@@ -1,0 +1,15 @@
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "id" : 10000002,
+  "description" : "This service definition authorized all application urls that from huizhan-inc.com.",
+  "serviceId" : "^(https?)://.*\\.huizhan-inc\\.(com[:/].*|com)",
+  "name": "HTTP(S) and IMAP(S)",
+  "evaluationOrder" : 10000002,
+  "logo" : null,
+  "logoutType" : "BACK_CHANNEL",
+  "requiredHandlers" : [ "java.util.HashSet", [ ] ],
+  "proxyPolicy" : {
+    "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "pattern" : "^https?://.*\\.huizhan-inc\\.(com[:/].*|com)"
+  }
+}

@@ -86,9 +86,12 @@
     </bean>
 
     <bean id="dbAuthHandler"
-          class="org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler"
+          class="org.jasig.cas.adaptors.jdbc.MyQueryDatabaseAuthenticationHandler"
           p:dataSource-ref="dataSource"
-          p:sql="SELECT PASSWORD FROM PLM_BOSS_USER WHERE USERNAME = ? "
+          p:sql="SELECT PASSWORD,STATUS,IS_DELETED FROM PLM_BOSS_USER WHERE USERNAME = ? "
+          p:sqlPasswordField="PASSWORD"
+          p:sqlStatusField="STATUS"
+          p:sqlDeletedField="IS_DELETED"
           p:passwordEncoder-ref="passwordEncoder" />
 
     <bean id="passwordEncoder"

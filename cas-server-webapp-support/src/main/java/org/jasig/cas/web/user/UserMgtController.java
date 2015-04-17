@@ -32,7 +32,7 @@ public class UserMgtController {
     @RequestMapping(value = "/update_passwd", method = RequestMethod.GET)
     public String updatePass(HttpServletRequest request, String code) {
         request.setAttribute("code", code);
-        return "/default/ui/user/updatePasswd";
+        return "default/ui/user/updatePasswd";
     }
 
     @RequestMapping(value = "/update_passwd", method = RequestMethod.POST)
