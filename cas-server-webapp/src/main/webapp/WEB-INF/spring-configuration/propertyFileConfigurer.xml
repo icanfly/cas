@@ -39,14 +39,14 @@
 
     <context:property-placeholder properties-ref="casProperties"/>-->
 
-    <beans profile="dev">
+    <beans profile="development">
         <bean id="placeHolder"
               class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
               p:ignoreResourceNotFound="true" p:systemPropertiesModeName="SYSTEM_PROPERTIES_MODE_OVERRIDE">
             <property name="locations">
                 <list>
                     <value>${cas.properties.filepath:/WEB-INF/cas.properties}</value>
-                    <value>classpath:/profiles/dev.properties</value>
+                    <value>classpath:/profiles/development.properties</value>
                     <value>file:#{systemProperties['user.home']}/.cas/cas.properties</value>
                 </list>
             </property>
@@ -62,6 +62,31 @@
             </property>
         </bean>
     </beans>
+
+    <beans profile="test">
+        <bean id="placeHolder"
+              class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+              p:ignoreResourceNotFound="true" p:systemPropertiesModeName="SYSTEM_PROPERTIES_MODE_OVERRIDE">
+            <property name="locations">
+                <list>
+                    <value>${cas.properties.filepath:/WEB-INF/cas.properties}</value>
+                    <value>classpath:/profiles/test.properties</value>
+                    <value>file:#{systemProperties['user.home']}/.cas/cas.properties</value>
+                </list>
+            </property>
+        </bean>
+        <bean id="settings"
+              class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+            <property name="ignoreResourceNotFound" value="true" />
+            <property name="locations">
+                <list>
+                    <value>${cas.properties.filepath:/WEB-INF/cas.properties}</value>
+                    <value>file:#{systemProperties['user.home']}/.cas/cas.properties</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
 
     <beans profile="production">
         <bean id="placeHolder"
