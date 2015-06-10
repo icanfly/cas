@@ -68,9 +68,9 @@ Handling authentication failures, mapping the result of which event to a new sta
 ...
 
 <action-state id="realSubmit">
-	<evaluate expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credential, messageContext)" />
+    <evaluate expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credential, messageContext)" />
 
-  	<transition on="success" to="sendTicketGrantingTicket" />
+    <transition on="success" to="sendTicketGrantingTicket" />
     <transition on="authenticationFailure" to="handleAuthenticationFailure" />
     <transition on="error" to="generateLoginTicket" />
 </action-state>
@@ -115,7 +115,7 @@ The flow in CAS is given a unique id that is registered inside a `flowRegistry` 
 ...
 
 <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
-	<webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
+    <webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
 </webflow:flow-registry>
 
 {% endhighlight %}
@@ -154,7 +154,7 @@ By default, the conversational state of Spring Webflow is managed inside the app
 
 {% highlight xml %}
 <bean id="loginFlowExecutionRepository" 
-	class=" org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
+    class=" org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
     c:flowExecutionFactory-ref="loginFlowExecutionFactory"
     c:flowDefinitionLocator-ref="loginFlowRegistry"
     c:transcoder-ref="loginFlowStateTranscoder" />
@@ -164,6 +164,23 @@ By default, the conversational state of Spring Webflow is managed inside the app
 {% endhighlight %}
 
 Default encryption strategy is using the 128-bit AES in CBC ciphering mode with compression turned on.
+
+##Required Service for Authentication Flow
+By default, CAS will present a generic success page if the initial authentication request does not identify
+the target application. In some cases, the ability to login to CAS without logging
+in to a particular service may be considered a misfeature because in practice, too few users and institutions
+are prepared to understand, brand, and support what is at best a fringe use case of logging in to CAS for the
+sake of establishing an SSO session without logging in to any CAS-reliant service. 
+
+As such, CAS optionally allows adopters to not bother to prompt for credentials when no target application is presented
+and instead presents a message when users visit CAS directly without specifying a service.
+
+This behavior is controlled via `cas.properties`:
+
+{% highlight properties %}
+# Indicates whether an SSO session can be created if no service is present.
+# create.sso.missing.service=false
+{% endhighlight %}
 
 ##Extending the Webflow
 The CAS webflow provides discrete points to inject new functionality. Thus, the only thing to modify is the flow definition where new beans and views can be added easily with the Maven overlay build method.
@@ -181,9 +198,9 @@ Once the action bean is configured, you may define it inside the `login-webflow.
 
 {% highlight xml %}
 <action-state id="actionStateId">
-	<action bean="customActionBeanId" />
-	<transition on="success" to="doThis" />
-	<transition on="error" to="doThat" />
+    <action bean="customActionBeanId" />
+    <transition on="success" to="doThis" />
+    <transition on="error" to="doThat" />
 </action-state>
 {% endhighlight %}
 
@@ -221,9 +238,9 @@ CAS presents the ability to allow the user to accept the usage policy before mov
 {% highlight xml %}
 <!-- Enable AUP flow	
 <action-state id="acceptableUsagePolicyCheck">
-	<evaluate expression="acceptableUsagePolicyFormAction.verify(flowRequestContext, flowScope.credential, messageContext)" />
-	<transition on="success" to="sendTicketGrantingTicket" />
-	<transition to="acceptableUsagePolicyView" />
+    <evaluate expression="acceptableUsagePolicyFormAction.verify(flowRequestContext, flowScope.credential, messageContext)" />
+    <transition on="success" to="sendTicketGrantingTicket" />
+    <transition to="acceptableUsagePolicyView" />
 </action-state>
 ...
 

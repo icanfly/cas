@@ -43,7 +43,7 @@
 
     <filter>
         <filter-name>CAS Client Info Logging Filter</filter-name>
-        <filter-class>com.github.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
+        <filter-class>org.jasig.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CAS Client Info Logging Filter</filter-name>
@@ -64,6 +64,10 @@
         <init-param>
             <param-name>allowMultiValuedParameters</param-name>
             <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>onlyPostParameters</param-name>
+            <param-value>username password</param-value>
         </init-param>
     </filter>
     <filter-mapping>
@@ -100,6 +104,8 @@
         <listener-class>
             org.springframework.web.context.ContextLoaderListener
         </listener-class>
+    </listener>
+    <listener>
         <listener-class>
             org.jasig.cas.CasEnvironmentContextListener
         </listener-class>
@@ -210,6 +216,11 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/status/config</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>metrics-ping</servlet-name>
         <url-pattern>/statistics/ping</url-pattern>
     </servlet-mapping>
@@ -238,6 +249,13 @@
         <servlet-name>cas</servlet-name>
         <url-pattern>/v1/*</url-pattern>
     </servlet-mapping>
+
+    <!--
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/samlValidate</url-pattern>
+    </servlet-mapping>
+    -->
 
     <session-config>
         <!-- Default to 5 minute session timeouts -->
