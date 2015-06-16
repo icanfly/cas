@@ -21,8 +21,8 @@ package org.jasig.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import com.github.inspektr.audit.annotation.Audit;
-import org.apache.commons.collections.Predicate;
+import org.jasig.inspektr.audit.annotation.Audit;
+import org.apache.commons.collections4.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -51,6 +51,7 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -274,16 +275,27 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             throw new UnauthorizedSsoServiceException();
         }
 
-        //CAS-1019
-        final List<Authentication> authns = ticketGrantingTicket.getChainedAuthentications();
-        if(authns.size() > 1) {
-            if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
-                final String message = String.
-                        format("ServiceManagement: Proxy attempt by service [%s] (registered service [%s]) is not allowed.",
-                        service.getId(), registeredService.toString());
-                logger.warn(message);
-                throw new UnauthorizedProxyingException(message);
+        final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
+        if (proxiedBy != null) {
+            logger.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
+            final RegisteredService proxyingService = servicesManager.findServiceBy(proxiedBy);
+
+            if (proxyingService != null) {
+                logger.debug("Located proxying service [{}] in the service registry", proxyingService);
+                if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
+                    logger.warn("Found proxying service {}, but it is not authorized to fulfill the proxy attempt made by {}",
+                            proxyingService.getId(), service.getId());
+                    throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
+                            + registeredService.getId());
+                }
+            } else {
+                logger.warn("No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
+                        service.getId(), registeredService.getId());
+                throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
+                        + registeredService.getId());
             }
+        } else {
+            logger.trace("TGT is not proxied by another service");
         }
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
@@ -481,15 +493,21 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
             throws AuthenticationException, TicketException {
 
-        final Authentication authentication = this.authenticationManager.authenticate(credentials);
+        final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
+        if (sanitizedCredentials.size() > 0) {
+            final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
-        final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
-            this.ticketGrantingTicketUniqueTicketIdGenerator
-                .getNewTicketId(TicketGrantingTicket.PREFIX),
-            authentication, this.ticketGrantingTicketExpirationPolicy);
+            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
+                    this.ticketGrantingTicketUniqueTicketIdGenerator
+                            .getNewTicketId(TicketGrantingTicket.PREFIX),
+                    authentication, this.ticketGrantingTicketExpirationPolicy);
 
-        this.ticketRegistry.addTicket(ticketGrantingTicket);
-        return ticketGrantingTicket;
+            this.ticketRegistry.addTicket(ticketGrantingTicket);
+            return ticketGrantingTicket;
+        }
+        final String msg = "No credentials were specified in the request for creating a new ticket-granting ticket";
+        logger.warn(msg);
+        throw new TicketCreationException(new IllegalArgumentException(msg));
     }
 
     /**

@@ -72,6 +72,9 @@ public class AuthenticationViaFormAction {
     /** Error result. */
     public static final String ERROR = "error";
 
+    /** Flow scope attribute that determines if authn is happening at a public workstation. */
+    public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
+
     /** Captcha error result. **/
     public static final String CAPTCHA_ERROR = "captchaError";
 
@@ -84,6 +87,7 @@ public class AuthenticationViaFormAction {
 
     @NotNull
     private CookieGenerator warnCookieGenerator;
+
 
     /**
      * Handle the submission of credentials from the post.
@@ -237,6 +241,7 @@ public class AuthenticationViaFormAction {
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(credential);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             putWarnCookieIfRequestParameterPresent(context);
+            putPublicWorkstationToFlowIfRequestParameterPresent(context);
             if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
                 return newEvent(SUCCESS_WITH_WARNINGS);
             }
@@ -283,6 +288,18 @@ public class AuthenticationViaFormAction {
     }
 
     /**
+     * Put public workstation into the flow if request parameter present.
+     *
+     * @param context the context
+     */
+    private void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
+        if (StringUtils.isNotBlank(context.getExternalContext()
+                .getRequestParameterMap().get(PUBLIC_WORKSTATION_ATTRIBUTE))) {
+            context.getFlowScope().put(PUBLIC_WORKSTATION_ATTRIBUTE, Boolean.TRUE);
+        }
+    }
+
+    /**
      * New event based on the given id.
      *
      * @param id the id
@@ -311,7 +328,7 @@ public class AuthenticationViaFormAction {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-     /**
+    /**
      * Sets ticket registry.
      *
      * @param ticketRegistry the ticket registry. No longer needed as the core service layer
