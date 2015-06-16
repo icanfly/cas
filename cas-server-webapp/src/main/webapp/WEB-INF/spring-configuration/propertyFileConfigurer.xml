@@ -20,6 +20,8 @@
 
 -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
@@ -53,7 +55,7 @@
                 </list>
             </property>
         </bean>
-        <bean id="settings"
+        <bean id="casProperties"
               class="org.springframework.beans.factory.config.PropertiesFactoryBean">
             <property name="ignoreResourceNotFound" value="true" />
             <property name="locations">
@@ -77,7 +79,7 @@
                 </list>
             </property>
         </bean>
-        <bean id="settings"
+        <bean id="casProperties"
               class="org.springframework.beans.factory.config.PropertiesFactoryBean">
             <property name="ignoreResourceNotFound" value="true" />
             <property name="locations">
@@ -102,7 +104,7 @@
                 </list>
             </property>
         </bean>
-        <bean id="settings"
+        <bean id="casProperties"
               class="org.springframework.beans.factory.config.PropertiesFactoryBean">
             <property name="ignoreResourceNotFound" value="true" />
             <property name="locations">

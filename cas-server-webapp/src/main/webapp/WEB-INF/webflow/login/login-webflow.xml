@@ -107,6 +107,7 @@
         <transition on="successWithWarnings" to="showMessages"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
         <transition on="error" to="generateLoginTicket"/>
+        <transition on="captchaError" to="generateLoginTicket" />
     </action-state>
 
     <!-- Enable AUP flow

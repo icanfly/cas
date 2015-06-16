@@ -1329,6 +1329,18 @@
                 <version>${log4j.version}</version>
                 <scope>runtime</scope>
             </dependency>
+
+            <dependency>
+                <groupId>com.google.kaptcha</groupId>
+                <artifactId>kaptcha</artifactId>
+                <version>${kaptcha.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.connector.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -1551,6 +1563,8 @@
         <jose.version>0.4.1</jose.version>
         <woodstox.version>4.4.1</woodstox.version>
         <pac4j.version>1.7.0</pac4j.version>
+        <kaptcha.version>2.3.2</kaptcha.version>
+        <mysql.connector.version>5.1.29</mysql.connector.version>
 
         <!-- Plugin Versions -->
         <coveralls-maven-plugin.version>3.1.0</coveralls-maven-plugin.version>
